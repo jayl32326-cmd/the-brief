@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Brief — what your AI request left unsaid</title>
+<meta name="description" content="Your agent followed your instruction and still did the wrong thing. Paste the request and see what it left unsaid. Free, runs in your browser, nothing uploaded, no sign-up.">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Your agent followed your instruction. It still did the wrong thing.">
+<meta property="og:description" content="Paste the request and see what it left unsaid. Free, in-browser, nothing uploaded, no sign-up.">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"The Brief",
+"applicationCategory":"DeveloperApplication","operatingSystem":"Any browser",
+"description":"Shows which of the seven classical circumstances a request to an AI agent leaves out. Deterministic, runs entirely client-side.",
+"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"isAccessibleForFree":true}
+</script>
+<style>
+:root{
+  --field:#1a1915; --field-2:#221f19; --deep:#0e0d0a;
+  --brass:#b98f3e; --brass-2:#e8ce8e; --brass-3:#7d5e21; --dim:#4a3a18;
+  --plate:#ded2b6; --plate-2:#cdbf9d; --plate-dark:#3a352a;
+  --ink:#241f16; --ink-2:#8b8577; --ink-3:#6d685c;
+  --accent:#c4563c; --good:#6aa76a; --future:#7fa8c9;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--field);color:var(--plate);font-family:var(--serif);
+  font-size:18px;line-height:1.66;-webkit-text-size-adjust:100%;
+  background-image:radial-gradient(ellipse 60% 48% at 78% 5%, rgba(185,143,62,.14), transparent 62%)}
+.wrap{max-width:1020px;margin:0 auto;padding:0 20px}
+.ribbon{background:var(--deep);color:var(--brass-2);font-family:var(--mono);font-size:11.5px;
+  letter-spacing:.11em;text-transform:uppercase;text-align:center;padding:9px 16px;line-height:1.6}
+.ribbon b{color:#fff;font-weight:600}
+.hero{padding:70px 0 48px;border-bottom:1px solid var(--brass-3)}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 18px}
+h1{font-size:clamp(2.1rem,1.2rem+3.9vw,3.9rem);line-height:1.04;margin:0 0 .32em;font-weight:500;
+  letter-spacing:-.02em;max-width:19ch;
+  background:linear-gradient(168deg,var(--brass-2),var(--brass) 58%,var(--brass-3));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.deck{font-size:clamp(1.08rem,1rem+.55vw,1.32rem);color:var(--ink-2);max-width:56ch;margin:0}
+.cta{display:flex;gap:11px;margin-top:28px;flex-wrap:wrap;align-items:center}
+.btn{font-family:var(--mono);font-size:12px;letter-spacing:.11em;text-transform:uppercase;
+  background:linear-gradient(170deg,var(--brass-2),var(--brass) 60%,var(--brass-3));
+  color:#241f16;border:1px solid var(--brass-3);padding:13px 22px;border-radius:2px;cursor:pointer;
+  text-decoration:none;display:inline-block;transition:transform .15s cubic-bezier(.16,1,.3,1),box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 7px 22px rgba(0,0,0,.35)}
+.btn.ghost{background:transparent;color:var(--brass);border-color:rgba(185,143,62,.42)}
+.btn.ghost:hover{color:var(--brass-2)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h2{font-size:clamp(1.5rem,1.15rem+1.3vw,2.1rem);margin:0 0 8px;letter-spacing:-.012em;
+  line-height:1.16;color:var(--plate)}
+.sec{padding:56px 0;border-bottom:1px solid rgba(185,143,62,.22)}
+.lede{font-size:1.06rem;color:var(--ink-2);max-width:62ch;margin:0 0 6px}
+p{max-width:66ch;color:var(--ink-2)}
+strong{color:var(--plate)}
+.pill{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  padding:4px 10px;border-radius:999px;border:1px solid currentColor;display:inline-block}
+.pill.live{color:var(--good)} .pill.plan{color:var(--future)}
+.step{font-family:var(--mono);font-size:10.5px;letter-spacing:.17em;text-transform:uppercase;
+  color:var(--brass);margin:0 0 10px}
+textarea{width:100%;min-height:80px;resize:vertical;background:var(--field-2);color:var(--plate);
+  border:1px solid var(--brass-3);border-radius:2px;padding:13px 15px;font-family:var(--serif);
+  font-size:16.5px;line-height:1.55}
+textarea:focus{outline:2px solid var(--brass);outline-offset:1px}
+.gauge{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:16px}
+.seg{border:1px solid var(--brass-3);border-radius:2px;padding:10px 4px;text-align:center;
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--dim);background:var(--plate-dark);transition:all .4s cubic-bezier(.16,1,.3,1)}
+.seg.on{background:linear-gradient(170deg,var(--plate),var(--plate-2));color:var(--ink);
+  border-color:var(--brass)}
+.result{display:flex;gap:18px;align-items:baseline;flex-wrap:wrap;margin-top:16px}
+.count{font-family:var(--mono);font-size:2rem;color:var(--brass-2);margin:0}
+.miss{font-size:14.8px;color:var(--ink-2);margin:0;flex:1 1 280px}
+.miss b{color:var(--accent)}
+/* the limit, stated by the tool about itself */
+.limit{background:var(--field-2);border:1px solid var(--brass-3);border-left:3px solid var(--accent);
+  border-radius:4px;padding:15px 18px;margin:26px 0}
+.limit h3{margin:0 0 6px;font-size:1.02rem;color:var(--plate)}
+/* the planned comparison */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+@media (max-width:800px){.cmp{grid-template-columns:1fr}}
+.col{border:1px solid var(--brass-3);border-radius:4px;padding:17px 19px;background:var(--field-2)}
+.col.future{border-color:var(--future);box-shadow:0 0 0 1px rgba(127,168,201,.22)}
+.col h3{margin:0 0 4px;font-size:1.04rem;color:var(--plate)}
+.col .lab{font-family:var(--mono);font-size:9.6px;letter-spacing:.13em;text-transform:uppercase;
+  margin:0 0 11px;color:var(--good)}
+.col.future .lab{color:var(--future)}
+.col ul{margin:10px 0 0;padding-left:18px}
+.col li{font-size:14.8px;color:var(--ink-2);margin:.4em 0;max-width:none}
+.quote{font-family:var(--mono);font-size:13px;background:rgba(0,0,0,.25);border:1px solid rgba(185,143,62,.25);
+  border-radius:2px;padding:11px 13px;color:var(--plate);margin:0 0 14px;white-space:pre-wrap}
+.fork{border-left:2px solid var(--future);padding-left:12px;margin:10px 0}
+.fork b{color:var(--future);font-family:var(--mono);font-size:10px;letter-spacing:.1em;display:block}
+.signup{background:var(--field-2);border:1px solid var(--brass-3);border-radius:5px;padding:26px 28px;margin-top:22px}
+.disclose{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-top:14px;line-height:1.7}
+footer{padding:34px 0 70px;font-family:var(--mono);font-size:11px;color:var(--ink-3);line-height:1.8}
+.note{font-size:14.4px;color:var(--ink-3);margin-top:10px;max-width:66ch}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.001s!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<div class="ribbon">
+  <b>The tool below is real and free.</b> The AI version is <b>not built</b> — everything marked
+  <b>planned</b> is a labelled mock-up, not a working system
+</div>
+
+<div class="wrap">
+
+<section class="hero">
+  <p class="eyebrow">The Brief</p>
+  <h1>Your agent followed your instruction. It still did the wrong thing.</h1>
+  <p class="deck">Not because it is stupid. Because the instruction left something unsaid, and
+  nothing told you which thing.</p>
+  <div class="cta">
+    <a class="btn" href="#tool">Check a request — free, no sign-up</a>
+    <a class="btn ghost" href="#planned">See what an AI version would add</a>
+  </div>
+</section>
+
+<section class="sec" id="tool">
+  <p class="step">Step one · the free tool</p>
+  <h2>Paste what you were about to ask.</h2>
+  <p style="margin:10px 0 0"><span class="pill live">Live</span>
+    <span class="pill live" style="margin-left:6px">In your browser</span>
+    <span class="pill live" style="margin-left:6px">Nothing uploaded</span>
+    <span class="pill live" style="margin-left:6px">No sign-up</span></p>
+  <p class="lede" style="margin-top:14px">It checks your request against the seven circumstances
+  that classical rhetoric says make an account complete — who, what, where, by what means, why,
+  how, when.</p>
+  <textarea id="req" spellcheck="false" aria-label="Your request"></textarea>
+  <div class="cta" style="margin-top:11px">
+    <button class="btn" id="read">Read it</button>
+    <button class="btn ghost" id="ex1">A vague one</button>
+    <button class="btn ghost" id="ex2">A good one</button>
+  </div>
+  <div class="gauge" id="gauge"></div>
+  <div class="result">
+    <p class="count" id="count">0⁄7</p>
+    <p class="miss" id="miss"></p>
+  </div>
+</section>
+
+<section class="sec">
+  <p class="step">Step two · where it stops</p>
+  <h2>It matches words. It does not understand you.</h2>
+  <div class="limit">
+    <h3>Three things the free tool gets wrong</h3>
+    <p style="margin:.4em 0"><strong>It is fooled by implication.</strong> Say <i>"so the support
+    team stops getting these emails"</i> and it sees <i>why</i>. Say <i>"I want fewer support
+    tickets"</i> — the same reason, no marker word — and it sees nothing.</p>
+    <p style="margin:.4em 0"><strong>It cannot tell which gap matters.</strong> A missing
+    <i>when</i> on a throwaway script is noise. A missing <i>why</i> on a refactor is the whole
+    job. It weights them the same.</p>
+    <p style="margin:.4em 0"><strong>It cannot see a contradiction.</strong> "Don't change
+    anything in production, just fix the deploy" reads as complete. It is not — it is two
+    instructions that cannot both hold.</p>
+  </div>
+  <p class="note">Said plainly because you will find all three within a few minutes of using it,
+  and a tool that hides its own limits is not worth trusting with a harder job.</p>
+</section>
+
+<section class="sec" id="planned">
+  <p class="step">Step three · planned, not built</p>
+  <h2>What an AI version would do instead</h2>
+  <p style="margin:10px 0 0"><span class="pill plan">Planned — mock-up, not a working system</span></p>
+  <p class="lede" style="margin-top:14px">One capability, not ten: <strong>show the two different
+  jobs your instruction could mean, before an agent picks one for you.</strong></p>
+
+  <p class="quote">Improve the video production pipeline.</p>
+
+  <div class="cmp">
+    <div class="col">
+      <p class="lab">The free tool, today — real</p>
+      <h3>Four circumstances missing</h3>
+      <ul>
+        <li>Flags <i>where</i>, <i>by what means</i>, <i>why</i>, <i>when</i> as absent.</li>
+        <li>Asks you to supply each one.</li>
+        <li>Treats all four as equally important.</li>
+        <li>Has no idea what "improve" means here.</li>
+      </ul>
+    </div>
+    <div class="col future">
+      <p class="lab">The AI version — planned</p>
+      <h3>"Improve" is two different jobs</h3>
+      <div class="fork"><b>Reading A — faster</b>Cut render time. Touches the encoder settings and
+      the job queue. Reversible.</div>
+      <div class="fork"><b>Reading B — better</b>Raise output quality. Touches the model and the
+      grade. Changes every published file from here on.</div>
+      <ul>
+        <li><strong>These lead to opposite changes.</strong> An agent will pick one silently.</li>
+        <li>Also flags a conflict you did not notice: no outcome metric, so "improved" cannot be
+        checked afterwards.</li>
+        <li>Asks <b>one</b> question — faster or better — not four.</li>
+        <li>Separates safe inspection from production changes, and says which it is about to do.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="note"><strong>None of the right-hand column exists.</strong> It is written out as a
+  concrete illustration of the one capability worth building, so you can tell me whether it is
+  worth building. No AI produced it; I wrote it by hand.</p>
+</section>
+
+<section class="sec" id="interest">
+  <p class="step">Step four · the only thing I am asking</p>
+  <h2>Would you want that?</h2>
+  <p class="lede">The free tool stays free and unchanged either way. This is about whether the
+  version that understands the instruction is worth making.</p>
+  <div class="signup">
+    <p style="margin:0 0 4px"><strong>Tell me about the request that went wrong.</strong></p>
+    <p style="margin:0;font-size:15.4px">There is no form and no mailing list — deliberately.
+    If you found this through a discussion thread, <strong>reply there</strong>: what you asked,
+    what the agent did instead, and whether seeing the two readings up front would have caught it.
+    A reply in the open is more useful than a private note, because everyone else reading can
+    disagree with it.</p>
+    <p style="margin:12px 0 0;font-size:15.4px">The question I actually want answered:
+    <strong>when your agent misunderstood you, was the missing piece something this instrument
+    would have shown you?</strong> If the answer is no, that is the more useful reply.</p>
+    <p class="disclose">
+      No form, no account, no sign-up, no cookie, no analytics, no tracking of any kind on this
+      page. Nothing you paste into the tool is transmitted anywhere — it never leaves your browser,
+      which you can confirm by reading the source or pulling your network cable. There is no
+      address here to harvest and no list to join, because neither exists yet.
+    </p>
+  </div>
+</section>
+
+<footer>
+  The Brief · a free browser tool, and a proposal for an AI version that is not built.<br>
+  No customers, no reviews, no usage figures and no accuracy claims appear on this page, because
+  none exist. The detection method is Cicero's list of circumstances — a method, freely usable,
+  implemented here in plain JavaScript you can read. Commonly credited to Quintilian; the chain
+  runs through <i>De inventione</i>.
+</footer>
+</div>
+
+<script>
+const CIRC=[
+ {k:"who",  re:/\b(for (me|us|my|our|the|a|an)\b|audience|reader|team|customer|client|user|student|boss|manager|my |our |to a |to an )/i},
+ {k:"what", re:/\b(write|draft|make|build|create|summar\w+|explain|list|plan|design|review|translate|fix|compare|email|memo|report|script|code|outline|answer|diagram|table|improve|refactor|migrate)\b/i},
+ {k:"where",re:/\b(in (a|an|the|our|my|this)\b|on (a|an|the|our|my)\b|slack|email|page|site|repo|file|doc|deck|meeting|call|branch|staging|production)\b/i},
+ {k:"means",re:/\b(using|use |with |based on|from the|according to|budget|limit|only|without|constraint|in python|in sql|in javascript)\b/i},
+ {k:"why",  re:/\b(so that|so the|so they|so we|so i|because|in order to|the goal|the point|purpose|to decide|to persuade|to avoid|to stop)\b/i},
+ {k:"how",  re:/\b(brief|short|concise|detailed|step[- ]by[- ]step|bullet|plain|formal|informal|friendly|technical|tone|format|under \d+|\d+ words|one page|paragraph|table|incremental)\b/i},
+ {k:"when", re:/\b(today|tomorrow|by \w+day|deadline|due|this (week|month|quarter)|next (week|month)|q[1-4]\b|before |after |urgent|asap)\b/i}
+];
+const g=document.getElementById("gauge");
+g.innerHTML=CIRC.map(c=>`<div class="seg" data-k="${c.k}">${c.k}</div>`).join("");
+
+function read(){
+  const t=document.getElementById("req").value;
+  let on=0, missing=[];
+  CIRC.forEach(c=>{
+    const hit=t.trim().length>0 && c.re.test(t);
+    g.querySelector(`[data-k="${c.k}"]`).classList.toggle("on",hit);
+    hit?on++:missing.push(c.k);
+  });
+  document.getElementById("count").textContent=`${on}⁄7`;
+  document.getElementById("miss").innerHTML = t.trim()
+    ? (missing.length?`Missing: <b>${missing.join("</b>, <b>")}</b>. Each one is a decision the agent will make for you.`
+                     :"All seven supplied.")
+    : "";
+}
+const V="Improve the video production pipeline.";
+const G="Cut render time on the video pipeline in the staging branch, using the existing encoder "+
+        "settings only, so the nightly job finishes before 6am, and report the before and after.";
+document.getElementById("read").onclick=read;
+document.getElementById("ex1").onclick=()=>{document.getElementById("req").value=V;read()};
+document.getElementById("ex2").onclick=()=>{document.getElementById("req").value=G;read()};
+document.getElementById("req").addEventListener("input",read);
+
+document.getElementById("req").value=V; read();
+</script>
+</body>
+</html>
